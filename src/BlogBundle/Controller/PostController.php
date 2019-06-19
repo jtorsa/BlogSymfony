@@ -22,9 +22,9 @@ class PostController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         //Creamos la entidad
-        $post = new Post();
-        $post->setTitle('Prueba');
-        $post->setBody('Es el cuerpo');
+        $post = new Post(); 
+        $post->setTitle('Prueba1');
+        $post->setBody('Es el cuerpo mas largo para otro post ');
         $post->setTag('untag');
         $post->setCreateAt(new \DateTime('now'));
         $post->setIduser(1);
