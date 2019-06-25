@@ -27,7 +27,6 @@ class PostController extends Controller
         $post->setBody('Es el cuerpo mas largo para otro post ');
         $post->setTag('untag');
         $post->setCreateAt(new \DateTime('now'));
-        $post->setIduser(1);
 
         //Persistimos la entidad
 
@@ -75,4 +74,70 @@ class PostController extends Controller
         $post = $repository->find($id);
         return $this->render('@Blog/Default/post.html.twig',['post'=>$post]);
     }
+
+      /**
+     * @Route("/findtitle/{title}")
+     */
+    public function getPostByTitle($title)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repository= $em->getRepository("BlogBundle:Post");
+        $post = $repository->findByTitle($title);
+        if(!$post){
+            return new Response("No existe ningun registro con ese nombre");
+        }
+        return $this->render('@Blog/Default/posts.html.twig',['posts'=>$post]);
+    }
+
+     /**
+     * @Route("/findquery/{title}")
+     */
+    public function getPostByTitleQuery($title)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repository= $em->getRepository("BlogBundle:Post");
+        $query= $repository->createQueryBuilder('p')
+            ->where('title = %ue%')->getQuery();
+        $post = $query->getResult();
+        if(!$post){
+            return new Response("No existe ningun registro con ese nombre");
+        }
+        return $this->render('@Blog/Default/posts.html.twig',['posts'=>$post]);
+    }
+
+
+    /**
+     * @Route("/updatepost/{id}")
+     */
+    public function updatePost($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repository= $em->getRepository("BlogBundle:Post");
+        $post= $repository->find($id);
+        if(!$post){
+            return new Response("No existe ningun registro con ese nombre");
+        }
+        $post->setTitle("Titulo cambiado");
+        $em->flush();
+        return new Response("Post actualizado ->");
+    }
+
+
+    /**
+     * @Route("/deletepost/{id}")
+     */
+    public function getDelete()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repository= $em->getRepository("BlogBundle:Post");
+        $post= $repository->find($id);
+        if(!$post){
+            return new Response("No existe el post");
+        }
+        $em->remove($post);
+        $em->flush();
+        return new Response("Post eliminado");
+    }
+
+
 }
